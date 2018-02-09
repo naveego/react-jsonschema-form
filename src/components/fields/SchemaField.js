@@ -1,5 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
+import { Form as SemanticForm, Message } from "semantic-ui-react";
 
 import {
   isMultiSelect,
@@ -76,20 +77,7 @@ function ErrorList(props) {
   if (errors.length === 0) {
     return <div />;
   }
-  return (
-    <div>
-      <p />
-      <ul className="error-detail bs-callout bs-callout-info">
-        {errors.map((error, index) => {
-          return (
-            <li className="text-danger" key={index}>
-              {error}
-            </li>
-          );
-        })}
-      </ul>
-    </div>
-  );
+  return <Message error visible list={errors} />;
 }
 
 function DefaultTemplate(props) {
@@ -104,19 +92,21 @@ function DefaultTemplate(props) {
     hidden,
     required,
     displayLabel,
+    attachLabel,
   } = props;
   if (hidden) {
     return children;
   }
 
   return (
-    <div className={classNames}>
-      {displayLabel && <Label label={label} required={required} id={id} />}
+    <SemanticForm.Field className={classNames}>
+      {displayLabel &&
+        !attachLabel && <Label label={label} required={required} id={id} />}
       {displayLabel && description ? description : null}
       {children}
       {errors}
       {help}
-    </div>
+    </SemanticForm.Field>
   );
 }
 
@@ -136,6 +126,7 @@ if (process.env.NODE_ENV !== "production") {
     required: PropTypes.bool,
     readonly: PropTypes.bool,
     displayLabel: PropTypes.bool,
+    attachLabel: PropTypes.bool,
     fields: PropTypes.object,
     formContext: PropTypes.object,
   };
@@ -146,6 +137,7 @@ DefaultTemplate.defaultProps = {
   readonly: false,
   required: false,
   displayLabel: true,
+  attachLabel: false,
 };
 
 function SchemaFieldRender(props) {
@@ -178,6 +170,7 @@ function SchemaFieldRender(props) {
 
   const uiOptions = getUiOptions(uiSchema);
   let { label: displayLabel = true } = uiOptions;
+  let { label: attachLabel = false } = uiOptions;
   if (schema.type === "array") {
     displayLabel =
       isMultiSelect(schema, definitions) ||
@@ -251,6 +244,7 @@ function SchemaFieldRender(props) {
     disabled,
     readonly,
     displayLabel,
+    attachLabel,
     classNames,
     formContext,
     fields,

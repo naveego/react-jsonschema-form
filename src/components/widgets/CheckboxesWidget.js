@@ -1,5 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
+import { Form as SemanticForm, Checkbox } from "semantic-ui-react";
 
 function selectValue(value, selected, all) {
   const at = all.indexOf(value);
@@ -17,41 +18,32 @@ function CheckboxesWidget(props) {
   const { id, disabled, options, value, autofocus, readonly, onChange } = props;
   const { enumOptions, inline } = options;
   return (
-    <div className="checkboxes" id={id}>
+    <SemanticForm.Group id={id} inline={inline}>
       {enumOptions.map((option, index) => {
         const checked = value.indexOf(option.value) !== -1;
-        const disabledCls = disabled || readonly ? "disabled" : "";
-        const checkbox = (
-          <span>
-            <input
-              type="checkbox"
-              id={`${id}_${index}`}
-              checked={checked}
-              disabled={disabled || readonly}
-              autoFocus={autofocus && index === 0}
-              onChange={event => {
-                const all = enumOptions.map(({ value }) => value);
-                if (event.target.checked) {
-                  onChange(selectValue(option.value, value, all));
-                } else {
-                  onChange(deselectValue(option.value, value));
-                }
-              }}
-            />
-            <span>{option.label}</span>
-          </span>
-        );
-        return inline ? (
-          <label key={index} className={`checkbox-inline ${disabledCls}`}>
-            {checkbox}
-          </label>
-        ) : (
-          <div key={index} className={`checkbox ${disabledCls}`}>
-            <label>{checkbox}</label>
-          </div>
+
+        return (
+          <SemanticForm.Field
+            control={Checkbox}
+            id={`${id}_${index}`}
+            key={`${id}_${index}`}
+            checked={checked}
+            readOnly={readonly}
+            label={option.label}
+            disabled={disabled || readonly}
+            autoFocus={autofocus && index === 0}
+            onChange={event => {
+              const all = enumOptions.map(({ value }) => value);
+              if (event.target.checked) {
+                onChange(selectValue(option.value, value, all));
+              } else {
+                onChange(deselectValue(option.value, value));
+              }
+            }}
+          />
         );
       })}
-    </div>
+    </SemanticForm.Group>
   );
 }
 

@@ -1,5 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
+import { Select } from "semantic-ui-react";
 
 import { asNumber } from "../../utils";
 
@@ -24,17 +25,6 @@ function processValue({ type, items }, value) {
   return value;
 }
 
-function getValue(event, multiple) {
-  if (multiple) {
-    return [].slice
-      .call(event.target.options)
-      .filter(o => o.selected)
-      .map(o => o.value);
-  } else {
-    return event.target.value;
-  }
-}
-
 function SelectWidget(props) {
   const {
     schema,
@@ -50,11 +40,12 @@ function SelectWidget(props) {
     onBlur,
     onFocus,
     placeholder,
+    compact,
   } = props;
   const { enumOptions, enumDisabled } = options;
   const emptyValue = multiple ? [] : "";
   return (
-    <select
+    <Select
       id={id}
       multiple={multiple}
       className="form-control"
@@ -62,34 +53,29 @@ function SelectWidget(props) {
       required={required}
       disabled={disabled || readonly}
       autoFocus={autofocus}
+      compact={compact}
+      placeholder={placeholder}
+      options={enumOptions.map(({ value, label }, i) => ({
+        text: label,
+        value: value,
+        disabled: enumDisabled && enumDisabled.indexOf(value) != -1,
+      }))}
       onBlur={
         onBlur &&
-        (event => {
-          const newValue = getValue(event, multiple);
-          onBlur(id, processValue(schema, newValue));
+        ((event, { value }) => {
+          onBlur(processValue(schema, value));
         })
       }
       onFocus={
         onFocus &&
-        (event => {
-          const newValue = getValue(event, multiple);
-          onFocus(id, processValue(schema, newValue));
+        ((event, { value }) => {
+          onFocus(processValue(schema, value));
         })
       }
-      onChange={event => {
-        const newValue = getValue(event, multiple);
-        onChange(processValue(schema, newValue));
-      }}>
-      {!multiple && !schema.default && <option value="">{placeholder}</option>}
-      {enumOptions.map(({ value, label }, i) => {
-        const disabled = enumDisabled && enumDisabled.indexOf(value) != -1;
-        return (
-          <option key={i} value={value} disabled={disabled}>
-            {label}
-          </option>
-        );
-      })}
-    </select>
+      onChange={(event, { value }) => {
+        onChange(processValue(schema, value));
+      }}
+    />
   );
 }
 

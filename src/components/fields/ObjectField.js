@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
+import { Segment } from "semantic-ui-react";
 
 import {
   orderProperties,
@@ -10,7 +11,7 @@ import {
 function DefaultObjectFieldTemplate(props) {
   const { TitleField, DescriptionField } = props;
   return (
-    <fieldset>
+    <Segment>
       {(props.uiSchema["ui:title"] || props.title) && (
         <TitleField
           id={`${props.idSchema.$id}__title`}
@@ -27,7 +28,7 @@ function DefaultObjectFieldTemplate(props) {
         />
       )}
       {props.properties.map(prop => prop.content)}
-    </fieldset>
+    </Segment>
   );
 }
 

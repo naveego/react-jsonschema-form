@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
+import { Form as SemanticForm, Grid } from "semantic-ui-react";
 
 import { shouldRender, parseDateString, toDateString, pad } from "../../utils";
 
@@ -31,19 +32,22 @@ function DateElement(props) {
   const id = rootId + "_" + type;
   const { SelectWidget } = registry.widgets;
   return (
-    <SelectWidget
-      schema={{ type: "integer" }}
-      id={id}
-      className="form-control"
-      options={{ enumOptions: rangeOptions(range[0], range[1]) }}
-      placeholder={type}
-      value={value}
-      disabled={disabled}
-      readonly={readonly}
-      autofocus={autofocus}
-      onChange={value => select(type, value)}
-      onBlur={onBlur}
-    />
+    <SemanticForm.Field>
+      <SelectWidget
+        style={{ width: "4em" }}
+        schema={{ type: "integer" }}
+        id={id}
+        className="form-control"
+        options={{ enumOptions: rangeOptions(range[0], range[1]) }}
+        placeholder={type}
+        value={value}
+        disabled={disabled}
+        readonly={readonly}
+        autofocus={autofocus}
+        onChange={value => select(type, value)}
+        onBlur={onBlur}
+      />
+    </SemanticForm.Field>
   );
 }
 
@@ -120,9 +124,9 @@ class AltDateWidget extends Component {
   render() {
     const { id, disabled, readonly, autofocus, registry, onBlur } = this.props;
     return (
-      <ul className="list-inline">
+      <Grid columns="equal">
         {this.dateElementProps.map((elemProps, i) => (
-          <li key={i}>
+          <Grid.Column key={i}>
             <DateElement
               rootId={id}
               select={this.onChange}
@@ -133,22 +137,22 @@ class AltDateWidget extends Component {
               onBlur={onBlur}
               autofocus={autofocus && i === 0}
             />
-          </li>
+          </Grid.Column>
         ))}
-        <li>
+        <Grid.Column>
           <a href="#" className="btn btn-info btn-now" onClick={this.setNow}>
             Now
           </a>
-        </li>
-        <li>
+        </Grid.Column>
+        <Grid.Column>
           <a
             href="#"
             className="btn btn-warning btn-clear"
             onClick={this.clear}>
             Clear
           </a>
-        </li>
-      </ul>
+        </Grid.Column>
+      </Grid>
     );
   }
 }

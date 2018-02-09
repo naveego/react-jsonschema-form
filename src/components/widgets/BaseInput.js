@@ -1,5 +1,6 @@
 import React from "react";
 import PropTypes from "prop-types";
+import { Input } from "semantic-ui-react";
 
 function BaseInput(props) {
   // Note: since React 15.2.0 we can't forward unknown element attributes, so we
@@ -15,6 +16,7 @@ function BaseInput(props) {
     schema,
     formContext,
     registry,
+    attachLabel,
     ...inputProps
   } = props;
 
@@ -25,8 +27,12 @@ function BaseInput(props) {
 
   const { rawErrors, ...cleanProps } = inputProps;
 
+  if (!attachLabel) {
+    delete cleanProps.label;
+  }
+
   return (
-    <input
+    <Input
       className="form-control"
       readOnly={readonly}
       disabled={disabled}
@@ -60,6 +66,7 @@ if (process.env.NODE_ENV !== "production") {
     onChange: PropTypes.func,
     onBlur: PropTypes.func,
     onFocus: PropTypes.func,
+    attachLabel: PropTypes.bool,
   };
 }
 

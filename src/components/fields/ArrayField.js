@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import PropTypes from "prop-types";
+import { Segment, Grid, Button, Icon } from "semantic-ui-react";
 
 import UnsupportedField from "./UnsupportedField";
 import {
@@ -35,42 +36,26 @@ function ArrayFieldDescription({ DescriptionField, idSchema, description }) {
 }
 
 function IconBtn(props) {
-  const { type = "default", icon, className, ...otherProps } = props;
+  const { icon, className, ...otherProps } = props;
   return (
-    <button
-      type="button"
-      className={`btn btn-${type} ${className}`}
-      {...otherProps}>
-      <i className={`glyphicon glyphicon-${icon}`} />
-    </button>
+    <Button type="button" icon {...otherProps}>
+      <Icon name={icon} />
+    </Button>
   );
 }
 
 // Used in the two templates
 function DefaultArrayItem(props) {
-  const btnStyle = {
-    flex: 1,
-    paddingLeft: 6,
-    paddingRight: 6,
-    fontWeight: "bold",
-  };
   return (
-    <div key={props.index} className={props.className}>
-      <div className={props.hasToolbar ? "col-xs-9" : "col-xs-12"}>
-        {props.children}
-      </div>
-
+    <Grid.Row key={props.index}>
+      <Grid.Column width={14}>{props.children}</Grid.Column>
       {props.hasToolbar && (
-        <div className="col-xs-3 array-item-toolbox">
-          <div
-            className="btn-group"
-            style={{ display: "flex", justifyContent: "space-around" }}>
+        <Grid.Column width={2} verticalAlign="bottom" textAlign="right">
+          <Button.Group>
             {(props.hasMoveUp || props.hasMoveDown) && (
               <IconBtn
-                icon="arrow-up"
-                className="array-item-move-up"
+                icon="arrow up"
                 tabIndex="-1"
-                style={btnStyle}
                 disabled={props.disabled || props.readonly || !props.hasMoveUp}
                 onClick={props.onReorderClick(props.index, props.index - 1)}
               />
@@ -78,10 +63,8 @@ function DefaultArrayItem(props) {
 
             {(props.hasMoveUp || props.hasMoveDown) && (
               <IconBtn
-                icon="arrow-down"
-                className="array-item-move-down"
+                icon="arrow down"
                 tabIndex="-1"
-                style={btnStyle}
                 disabled={
                   props.disabled || props.readonly || !props.hasMoveDown
                 }
@@ -91,25 +74,23 @@ function DefaultArrayItem(props) {
 
             {props.hasRemove && (
               <IconBtn
-                type="danger"
+                negative
                 icon="remove"
-                className="array-item-remove"
                 tabIndex="-1"
-                style={btnStyle}
                 disabled={props.disabled || props.readonly}
                 onClick={props.onDropIndexClick(props.index)}
               />
             )}
-          </div>
-        </div>
+          </Button.Group>
+        </Grid.Column>
       )}
-    </div>
+    </Grid.Row>
   );
 }
 
 function DefaultFixedArrayFieldTemplate(props) {
   return (
-    <fieldset className={props.className}>
+    <Segment className={props.className}>
       <ArrayFieldTitle
         key={`array-field-title-${props.idSchema.$id}`}
         TitleField={props.TitleField}
@@ -126,25 +107,27 @@ function DefaultFixedArrayFieldTemplate(props) {
         </div>
       )}
 
-      <div
-        className="row array-item-list"
-        key={`array-item-list-${props.idSchema.$id}`}>
+      <Grid container stackable key={`array-item-list-${props.idSchema.$id}`}>
         {props.items && props.items.map(DefaultArrayItem)}
-      </div>
 
-      {props.canAdd && (
-        <AddButton
-          onClick={props.onAddClick}
-          disabled={props.disabled || props.readonly}
-        />
-      )}
-    </fieldset>
+        {props.canAdd && (
+          <Grid.Row>
+            <Grid.Column width={16} textAlign="right">
+              <AddButton
+                onClick={props.onAddClick}
+                disabled={props.disabled || props.readonly}
+              />
+            </Grid.Column>
+          </Grid.Row>
+        )}
+      </Grid>
+    </Segment>
   );
 }
 
 function DefaultNormalArrayFieldTemplate(props) {
   return (
-    <fieldset className={props.className}>
+    <Segment className={props.className}>
       <ArrayFieldTitle
         key={`array-field-title-${props.idSchema.$id}`}
         TitleField={props.TitleField}
@@ -164,19 +147,20 @@ function DefaultNormalArrayFieldTemplate(props) {
         />
       )}
 
-      <div
-        className="row array-item-list"
-        key={`array-item-list-${props.idSchema.$id}`}>
+      <Grid container stackable key={`array-item-list-${props.idSchema.$id}`}>
         {props.items && props.items.map(p => DefaultArrayItem(p))}
-      </div>
-
-      {props.canAdd && (
-        <AddButton
-          onClick={props.onAddClick}
-          disabled={props.disabled || props.readonly}
-        />
-      )}
-    </fieldset>
+        {props.canAdd && (
+          <Grid.Row>
+            <Grid.Column width={16} textAlign="right">
+              <AddButton
+                onClick={props.onAddClick}
+                disabled={props.disabled || props.readonly}
+              />
+            </Grid.Column>
+          </Grid.Row>
+        )}
+      </Grid>
+    </Segment>
   );
 }
 
@@ -657,7 +641,7 @@ function AddButton({ onClick, disabled }) {
     <div className="row">
       <p className="col-xs-3 col-xs-offset-9 array-item-add text-right">
         <IconBtn
-          type="info"
+          positive
           icon="plus"
           className="btn-add col-xs-12"
           tabIndex="0"
