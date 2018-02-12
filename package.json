@@ -1,5 +1,5 @@
 {
-  "name": "@naveego/react-jsonschema-form",
+  "name": "@naveego/react-jsonschema-form-semantic",
   "version": "0.0.1",
   "description": "A simple React component capable of building HTML forms out of a JSON schema. Based on react-jsonschema-form, but using semantic-ui-react instead of bootstrap.",
   "scripts": {
@@ -102,7 +102,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/mozilla-services/react-jsonschema-form.git"
+    "url": "git+https://github.com/naveego/react-jsonschema-form-semantic"
   },
   "author": "Nicolas Perriault <nperriault@mozilla.com>",
   "keywords": [
@@ -111,5 +111,5 @@
     "json-schema"
   ],
   "license": "Apache-2.0",
-  "homepage": "https://github.com/mozilla-services/react-jsonschema-form#readme"
+  "homepage": "https://github.com/naveego/react-jsonschema-form-semantic#readme"
 }

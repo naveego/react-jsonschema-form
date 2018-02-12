@@ -36,16 +36,16 @@ describe("ObjectField", () => {
       },
     };
 
-    it("should render a fieldset", () => {
+    it("should render a .segment", () => {
       const { node } = createFormComponent({ schema });
 
-      expect(node.querySelectorAll("fieldset")).to.have.length.of(1);
+      expect(node.querySelectorAll(".segment")).to.have.length.of(1);
     });
 
-    it("should render a fieldset legend", () => {
+    it("should render a .segment legend", () => {
       const { node } = createFormComponent({ schema });
 
-      const legend = node.querySelector("fieldset > legend");
+      const legend = node.querySelector(".segment > legend");
 
       expect(legend.textContent).eql("my object");
       expect(legend.id).eql("root__title");
@@ -60,7 +60,7 @@ describe("ObjectField", () => {
           TitleField: CustomTitleField,
         },
       });
-      expect(node.querySelector("fieldset > #custom").textContent).to.eql(
+      expect(node.querySelector(".segment > #custom").textContent).to.eql(
         "my object"
       );
     });
@@ -74,7 +74,7 @@ describe("ObjectField", () => {
         schema,
         fields: { DescriptionField: CustomDescriptionField },
       });
-      expect(node.querySelector("fieldset > #custom").textContent).to.eql(
+      expect(node.querySelector(".segment > #custom").textContent).to.eql(
         "my description"
       );
     });

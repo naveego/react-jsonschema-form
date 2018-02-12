@@ -38,7 +38,7 @@ function ArrayFieldDescription({ DescriptionField, idSchema, description }) {
 function IconBtn(props) {
   const { icon, className, ...otherProps } = props;
   return (
-    <Button type="button" icon {...otherProps}>
+    <Button type="button" icon {...otherProps} className={className}>
       <Icon name={icon} />
     </Button>
   );
@@ -55,6 +55,7 @@ function DefaultArrayItem(props) {
             {(props.hasMoveUp || props.hasMoveDown) && (
               <IconBtn
                 icon="arrow up"
+                className="array-item-move-up"
                 tabIndex="-1"
                 disabled={props.disabled || props.readonly || !props.hasMoveUp}
                 onClick={props.onReorderClick(props.index, props.index - 1)}
@@ -65,6 +66,7 @@ function DefaultArrayItem(props) {
               <IconBtn
                 icon="arrow down"
                 tabIndex="-1"
+                className="array-item-move-down"
                 disabled={
                   props.disabled || props.readonly || !props.hasMoveDown
                 }
@@ -76,6 +78,7 @@ function DefaultArrayItem(props) {
               <IconBtn
                 negative
                 icon="remove"
+                className="array-item-remove"
                 tabIndex="-1"
                 disabled={props.disabled || props.readonly}
                 onClick={props.onDropIndexClick(props.index)}

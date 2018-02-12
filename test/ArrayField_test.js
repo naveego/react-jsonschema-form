@@ -35,16 +35,16 @@ describe("ArrayField", () => {
       items: { type: "string" },
     };
 
-    it("should render a fieldset", () => {
+    it("should render a segment", () => {
       const { node } = createFormComponent({ schema });
 
-      expect(node.querySelectorAll("fieldset")).to.have.length.of(1);
+      expect(node.querySelectorAll(".segment")).to.have.length.of(1);
     });
 
-    it("should render a fieldset legend", () => {
+    it("should render a segment label", () => {
       const { node } = createFormComponent({ schema });
 
-      const legend = node.querySelector("fieldset > legend");
+      const legend = node.querySelector(".segment > .label.attached.top");
 
       expect(legend.textContent).eql("my list");
       expect(legend.id).eql("root__title");
@@ -53,7 +53,7 @@ describe("ArrayField", () => {
     it("should render a description", () => {
       const { node } = createFormComponent({ schema });
 
-      const description = node.querySelector("fieldset > .field-description");
+      const description = node.querySelector(".segment > .field-description");
 
       expect(description.textContent).eql("my description");
       expect(description.id).eql("root__description");
@@ -66,7 +66,7 @@ describe("ArrayField", () => {
         schema,
         fields: { TitleField: CustomTitleField },
       });
-      expect(node.querySelector("fieldset > #custom").textContent).to.eql(
+      expect(node.querySelector(".segment > #custom").textContent).to.eql(
         "my list"
       );
     });
@@ -82,7 +82,7 @@ describe("ArrayField", () => {
           DescriptionField: CustomDescriptionField,
         },
       });
-      expect(node.querySelector("fieldset > #custom").textContent).to.eql(
+      expect(node.querySelector(".segment > #custom").textContent).to.eql(
         "my description"
       );
     });
@@ -568,7 +568,7 @@ describe("ArrayField", () => {
       it("should render a select widget", () => {
         const { node } = createFormComponent({ schema });
 
-        expect(node.querySelectorAll("select")).to.have.length.of(1);
+        expect(node.querySelectorAll("[role=listbox]")).to.have.length.of(1);
       });
 
       it("should render a select widget with a label", () => {
@@ -829,16 +829,16 @@ describe("ArrayField", () => {
         schema,
         formData: [[1, 2], [3, 4]],
       });
-      expect(node.querySelectorAll("fieldset fieldset")).to.have.length.of(2);
+      expect(node.querySelectorAll(".segment .segment")).to.have.length.of(2);
     });
 
     it("should add an inner list when clicking the add button", () => {
       const { node } = createFormComponent({ schema });
-      expect(node.querySelectorAll("fieldset fieldset")).to.be.empty;
+      expect(node.querySelectorAll(".segment .segment")).to.be.empty;
 
       Simulate.click(node.querySelector(".array-item-add button"));
 
-      expect(node.querySelectorAll("fieldset fieldset")).to.have.length.of(1);
+      expect(node.querySelectorAll(".segment .segment")).to.have.length.of(1);
     });
   });
 
@@ -877,15 +877,15 @@ describe("ArrayField", () => {
       },
     };
 
-    it("should render a fieldset", () => {
+    it("should render a .segment", () => {
       const { node } = createFormComponent({ schema });
 
-      expect(node.querySelectorAll("fieldset")).to.have.length.of(1);
+      expect(node.querySelectorAll(".segment")).to.have.length.of(1);
     });
 
-    it("should render a fieldset legend", () => {
+    it("should render a .segment legend", () => {
       const { node } = createFormComponent({ schema });
-      const legend = node.querySelector("fieldset > legend");
+      const legend = node.querySelector(".segment > legend");
       expect(legend.textContent).eql("List of fixed items");
       expect(legend.id).eql("root__title");
     });
@@ -893,10 +893,10 @@ describe("ArrayField", () => {
     it("should render field widgets", () => {
       const { node } = createFormComponent({ schema });
       const strInput = node.querySelector(
-        "fieldset .field-string input[type=text]"
+        ".segment .field-string input[type=text]"
       );
       const numInput = node.querySelector(
-        "fieldset .field-number input[type=text]"
+        ".segment .field-number input[type=text]"
       );
       expect(strInput.id).eql("root_0");
       expect(numInput.id).eql("root_1");
@@ -905,10 +905,10 @@ describe("ArrayField", () => {
     it("should mark non-null item widgets as required", () => {
       const { node } = createFormComponent({ schema });
       const strInput = node.querySelector(
-        "fieldset .field-string input[type=text]"
+        ".segment .field-string input[type=text]"
       );
       const numInput = node.querySelector(
-        "fieldset .field-number input[type=text]"
+        ".segment .field-number input[type=text]"
       );
       expect(strInput.required).eql(true);
       expect(numInput.required).eql(true);
@@ -917,10 +917,10 @@ describe("ArrayField", () => {
     it("should fill fields with data", () => {
       const { node } = createFormComponent({ schema, formData: ["foo", 42] });
       const strInput = node.querySelector(
-        "fieldset .field-string input[type=text]"
+        ".segment .field-string input[type=text]"
       );
       const numInput = node.querySelector(
-        "fieldset .field-number input[type=text]"
+        ".segment .field-number input[type=text]"
       );
       expect(strInput.value).eql("foo");
       expect(numInput.value).eql("42");
@@ -929,10 +929,10 @@ describe("ArrayField", () => {
     it("should handle change events", () => {
       const { comp, node } = createFormComponent({ schema });
       const strInput = node.querySelector(
-        "fieldset .field-string input[type=text]"
+        ".segment .field-string input[type=text]"
       );
       const numInput = node.querySelector(
-        "fieldset .field-number input[type=text]"
+        ".segment .field-number input[type=text]"
       );
 
       Simulate.change(strInput, { target: { value: "bar" } });
@@ -947,7 +947,7 @@ describe("ArrayField", () => {
         formData: [1, 2, "bar"],
       });
       const addInput = node.querySelector(
-        "fieldset .field-string input[type=text]"
+        ".segment .field-string input[type=text]"
       );
       expect(addInput.id).eql("root_2");
       expect(addInput.value).eql("bar");
