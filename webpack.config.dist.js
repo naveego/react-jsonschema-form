@@ -6,7 +6,7 @@ module.exports = {
   context: __dirname + "/src",
   entry: "./index.js",
   output: {
-    path: "./dist",
+    path: __dirname + "/dist",
     publicPath: "/dist/",
     filename: "react-jsonschema-form.js",
     library: "JSONSchemaForm",
@@ -26,13 +26,19 @@ module.exports = {
       commonjs: "react",
       commonjs2: "react",
       amd: "react"
+    },
+    "semantic-ui-react": {
+      root: "semantic-ui-react",
+      commonjs: "semantic-ui-react",
+      commonjs2: "semantic-ui-react",
+      amd: "semantic-ui-react"
     }
   },
   module: {
     loaders: [
       {
         test: /\.js$/,
-        loaders: ["babel"],
+        loaders: ["babel-loader"],
       },
       {
         test: /\.json$/,
