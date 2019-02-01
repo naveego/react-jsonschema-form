@@ -32,6 +32,10 @@ export default class Form extends Component {
     this.setState(this.getStateFromProps(nextProps));
   }
 
+  componentWillUnmount() {
+    this.isUnmounted = true;
+  }
+
   getStateFromProps(props) {
     const state = this.state || {};
     const schema = "schema" in props ? props.schema : this.props.schema;
@@ -43,12 +47,6 @@ export default class Form extends Component {
     const formData = getDefaultFormState(schema, props.formData, definitions);
     const retrievedSchema = retrieveSchema(schema, definitions, formData);
 
-    const { errors, errorSchema } = mustValidate
-      ? this.validate(formData, schema)
-      : {
-          errors: state.errors || [],
-          errorSchema: state.errorSchema || {},
-        };
     const idSchema = toIdSchema(
       retrievedSchema,
       uiSchema["ui:rootFieldId"],
@@ -56,15 +54,28 @@ export default class Form extends Component {
       formData,
       props.idPrefix
     );
-    return {
+    const nextState = {
       schema,
       uiSchema,
       idSchema,
       formData,
       edit,
-      errors,
-      errorSchema,
     };
+
+    if (mustValidate) {
+      // XXX: We use this.propsForPromise as a hack to cancel the Promise.
+      // If the props that the Promise is using don't match the very latest
+      // props, it shouldn't execute.
+      this.propsForPromise = props;
+      this.validate(formData, schema).then(state => {
+        this.propsForPromise === props && this.setState(state);
+      });
+    }
+
+    nextState.errors = state.errors || [];
+    nextState.errorsSchema = state.errorSchema || {};
+
+    return nextState;
   }
 
   shouldComponentUpdate(nextProps, nextState) {
@@ -100,11 +111,18 @@ export default class Form extends Component {
   }
 
   onChange = (formData, newErrorSchema) => {
+    const setStateAndBackPropagate = state => {
+      setState(this, state, () => {
+        if (this.props.onChange) {
+          this.props.onChange(this.state);
+        }
+      });
+    };
+
     const mustValidate = !this.props.noValidate && this.props.liveValidate;
     let state = { formData };
     if (mustValidate) {
-      const { errors, errorSchema } = this.validate(formData);
-      state = { ...state, errors, errorSchema };
+      this.validate(formData).then(setStateAndBackPropagate);
     } else if (!this.props.noValidate && newErrorSchema) {
       state = {
         ...state,
@@ -112,11 +130,7 @@ export default class Form extends Component {
         errors: toErrorList(newErrorSchema),
       };
     }
-    setState(this, state, () => {
-      if (this.props.onChange) {
-        this.props.onChange(this.state);
-      }
-    });
+    setStateAndBackPropagate(state);
   };
 
   onBlur = (...args) => {
@@ -134,24 +148,31 @@ export default class Form extends Component {
   onSubmit = event => {
     event.preventDefault();
 
-    if (!this.props.noValidate) {
-      const { errors, errorSchema } = this.validate(this.state.formData);
-      if (Object.keys(errors).length > 0) {
-        setState(this, { errors, errorSchema }, () => {
-          if (this.props.onError) {
-            this.props.onError(errors);
+    const onValidationOK = () => {
+      if (this.props.onSubmit) {
+        this.props.onSubmit({ ...this.state, status: "submitted" });
+      }
+      if (!this.isUnmounted) {
+        this.setState({ errors: [], errorSchema: {} });
+      }
+    };
+
+    this.props.noValidate
+      ? onValidationOK()
+      : this.validate(this.state.formData).then(({ errors, errorSchema }) => {
+          if (Object.keys(errors).length > 0) {
+            setState(this, { errors, errorSchema }, () => {
+              if (this.props.onError) {
+                this.props.onError(errors);
+              } else {
+                console.error("Form validation failed", errors);
+              }
+            });
+            return;
           } else {
-            console.error("Form validation failed", errors);
+            onValidationOK();
           }
         });
-        return;
-      }
-    }
-
-    if (this.props.onSubmit) {
-      this.props.onSubmit({ ...this.state, status: "submitted" });
-    }
-    this.setState({ errors: [], errorSchema: {} });
   };
 
   getRegistry() {

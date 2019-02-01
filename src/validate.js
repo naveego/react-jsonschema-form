@@ -163,16 +163,32 @@ export default function validateFormData(
   const errorSchema = toErrorSchema(errors);
 
   if (typeof customValidate !== "function") {
-    return { errors, errorSchema };
+    return Promise.resolve({ errors, errorSchema });
   }
 
-  const errorHandler = customValidate(formData, createErrorHandler(formData));
-  const userErrorSchema = unwrapErrorHandler(errorHandler);
-  const newErrorSchema = mergeObjects(errorSchema, userErrorSchema, true);
-  // XXX: The errors list produced is not fully compliant with the format
-  // exposed by the jsonschema lib, which contains full field paths and other
-  // properties.
-  const newErrors = toErrorList(newErrorSchema);
+  const getResultForErrorHandler = errorHandler => {
+    const userErrorSchema = unwrapErrorHandler(errorHandler);
+    const newErrorSchema = mergeObjects(errorSchema, userErrorSchema, true);
+    // XXX: The errors list produced is not fully compliant with the format
+    // exposed by the jsonschema lib, which contains full field paths and other
+    // properties.
+    const newErrors = toErrorList(newErrorSchema);
+    return Promise.resolve({ errors: newErrors, errorSchema: newErrorSchema });
+  };
 
-  return { errors: newErrors, errorSchema: newErrorSchema };
+  const errorResponse = customValidate(formData, createErrorHandler(formData));
+
+  return errorResponse.then
+    ? errorResponse.then(errorHandler => getResultForErrorHandler(errorHandler))
+    : getResultForErrorHandler(errorResponse);
+
+  // const errorHandler = customValidate(formData, createErrorHandler(formData));
+  // const userErrorSchema = unwrapErrorHandler(errorHandler);
+  // const newErrorSchema = mergeObjects(errorSchema, userErrorSchema, true);
+  // // XXX: The errors list produced is not fully compliant with the format
+  // // exposed by the jsonschema lib, which contains full field paths and other
+  // // properties.
+  // const newErrors = toErrorList(newErrorSchema);
+
+  // return { errors: newErrors, errorSchema: newErrorSchema };
 }
