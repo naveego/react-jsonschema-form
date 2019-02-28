@@ -1,6 +1,6 @@
 import React from "react";
 import "setimmediate";
-import validateFormData from "./validate";
+import { validateFormDataWithSchemaOnly } from "./validate";
 
 const widgetMap = {
   boolean: {
@@ -507,7 +507,10 @@ function withExactlyOneSubschema(
           [dependencyKey]: conditionPropertySchema,
         },
       };
-      const { errors } = validateFormData(formData, conditionSchema);
+      const { errors } = validateFormDataWithSchemaOnly(
+        formData,
+        conditionSchema
+      );
       return errors.length === 0;
     }
   });

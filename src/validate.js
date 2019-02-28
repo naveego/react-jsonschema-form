@@ -181,14 +181,11 @@ export default function validateFormData(
   return errorResponse.then
     ? errorResponse.then(errorHandler => getResultForErrorHandler(errorHandler))
     : getResultForErrorHandler(errorResponse);
+}
 
-  // const errorHandler = customValidate(formData, createErrorHandler(formData));
-  // const userErrorSchema = unwrapErrorHandler(errorHandler);
-  // const newErrorSchema = mergeObjects(errorSchema, userErrorSchema, true);
-  // // XXX: The errors list produced is not fully compliant with the format
-  // // exposed by the jsonschema lib, which contains full field paths and other
-  // // properties.
-  // const newErrors = toErrorList(newErrorSchema);
-
-  // return { errors: newErrors, errorSchema: newErrorSchema };
+export function validateFormDataWithSchemaOnly(formData, schema) {
+  ajv.validate(schema, formData);
+  let errors = transformAjvErrors(ajv.errors);
+  const errorSchema = toErrorSchema(errors);
+  return { errors, errorSchema };
 }
